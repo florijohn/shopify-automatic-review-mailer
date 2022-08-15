@@ -1,0 +1,410 @@
+{% assign current_date = date | date: "%d.%m.%Y" %}
+{% assign current_time = date | date: "%H:%M" %}
+
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+  <title>Rechnung {{ name }} - {{ current_date }} - {{ current_time }}</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" type="text/css" media="screen" href="/assets/admin/merchant_mailer/style.css">
+  <style data-premailer="ignore">
+    .button__cell { background: {{ shop.email_accent_color }}; }
+    a, a:hover, a:active, a:visited { color: {{ shop.email_accent_color }}; }
+    @media print{
+      body {
+        color: black !important;
+      }
+
+      .subtitle-lines,
+      .subtotal-line__title,
+      .subtotal-line__value {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .subtotal-table {
+        margin: 0 !important;
+      }
+    }
+  </style>
+</head>
+
+    <body>
+      <div class="orderinfo" style="display: none;">
+          {
+            "current_date": "{{ current_date }}",
+            "current_time": "{{ current_time }}",
+            "name": "{{ name }}",
+            "gateway": "{{ gateway }}",
+            "customer.name": "{{ customer.name }}",
+            "shipping_address.street": "{{ shipping_address.street }}",
+            "shipping_address.city": "{{ shipping_address.city }}",
+            "shipping_address.zip": "{{ shipping_address.zip }}",
+            "shipping_address.phone": "{{ shipping_address.phone }}",
+            {% if requires_shipping and shipping_address %}
+            "requires_shipping": "true",
+            {% else %}
+            "requires_shipping": "false",
+            {% endif %}
+            "note": "{{ note }}",
+            "email": "{{ email }}",
+            "total_price": "{{ total_price | money }}",
+            "id": "{{ id }}",
+            "skus": "{% for line in subtotal_line_items %}{% if line.sku != blank %}{{ line.sku }},{% endif %}{% endfor %}"
+          }
+      </div>
+        <table class="body">
+            <tr>
+                <td>
+                    <table class="row">
+  <tr>
+    <td class="section__cell">
+      <center>
+        <table class="container section">
+          <tr>
+            <td>
+              
+<table class="row content">
+  <tr>
+    <td class="content__cell {% if no_top_border == 'hide_border' %}no_top__border{% endif %}">
+      <center>
+        <table class="container">
+          <tr>
+            <td class="customer-info__item customer-info__item--last">
+              <strong>Rechnung {{ name }} - {{ current_date }} - {{ current_time }} - {{ gateway }}</strong>
+            </td>
+          </tr>
+          {% if requires_shipping and shipping_address %}
+            <tr>
+              <td class="customer-info__item customer-info__item--last">
+                <p>
+                  {{ shipping_address.company }}<br>
+                  {{ shipping_address.name }}<br>
+                  {{ shipping_address.street }}<br>
+                  {{ shipping_address.city }},
+                  {{ shipping_address.province }}
+                  {{ shipping_address.zip }}<br>
+                  {{ shipping_address.country }}<br>
+                  {{ shipping_address.phone }}<br>
+                </p>
+              </td>
+              <td>
+                <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https://qr.als-pizza.de/order.php?street={{ shipping_address.address1 | url_encode }}%26zip={{ shipping_address.zip | url_encode }}%26city={{ shipping_address.city | url_encode }}%26email={{ email | url_encode }}">
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td class="customer-info__item customer-info__item--last">
+                <strong>Abholung</strong>
+              </td>
+            </tr>
+        	{% endif %}
+          <tr>
+            <td>
+              <p>
+                {% if customer %}
+                  {{ customer.name }}<br>
+                  Bestellungen: {{ customer.orders_count }}<br>
+                {% endif %}
+              </p>
+            </td>
+          </tr>
+          {% if note %}
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>
+              <table class="row">
+                <tr>
+                  <td class="customer-info__item customer-info__item--last">
+                    <strong>Bemerkungen</strong>
+                    <br>
+                    <p>{{ note }}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          {% endif %}
+          {% if checkout.note %}
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>
+              <table class="row">
+                <tr>
+                  <td class="customer-info__item customer-info__item--last">
+                    <strong>Lieferhinweise</strong>
+                    <br>
+                    <p>{{ checkout.note }}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          {% endif %}
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+<table class="row content">
+  <tr>
+    <td class="content__cell {% if no_top_border == 'hide_border' %}no_top__border{% endif %}">
+      <center>
+        <table class="container">
+          <tr>
+            <td>
+              
+            <strong class="order-list__summary-title">Bestellübersicht</strong>
+            <br>
+                            
+<table class="row">
+  {% for line in subtotal_line_items %}
+  <tr class="order-list__item">
+    <td class="order-list__item__cell">
+      <table>
+        <td class="order-list__product-description-cell">
+          {% if line.quantity < line.quantity %}
+            {% capture line_display %} {{ line.quantity }} of {{ line.quantity }} {% endcapture %}
+          {% else %}
+            {% assign line_display = line.quantity  %}
+          {% endif %}
+          
+          {% if line.quantity %}
+            {% if line.original_line_price != line.final_line_price %}
+              <span><del class="order-list__item-original-price">{{ line.original_price | money }}</del></span>
+            {% endif %}
+             <span>{{ line.quantity }} x {{ line.product.title }}</span><br/>
+          {% endif %}
+
+          {% if line.variant.title != 'Default Title' %}
+            <span class="order-list__item-variant">{{ line.variant.title }}</span>
+          {% endif %}
+  
+
+          {% if line.sku != blank %}
+            <span>{{ line.sku }}</span><br>
+          {% endif %}
+  
+  				{% assign property_size = line.properties | size %} 
+          {% if property_size > 0 %} 
+            <div class="order-list__item-properties">
+              {% for p in line.properties %} 
+              <div class="order-list__item-property">
+                {% assign first_character_in_key = p.first | truncate: 1, '' %}
+                {% unless p.last == blank or first_character_in_key == '_' %} 
+                  <span>{{ p.first }}: </span>
+                  {%- if p.last contains '/uploads/' -%} 
+                  	<span>{{ p.last | split: '/' | last }}</span> 
+                  {%- else -%} 
+                    {{ p.last }} 
+                  {%- endif -%} 
+                {% endunless %} 
+              </div> 
+              {% endfor %}
+            </div>
+      		{% endif %} 
+          
+          
+          
+          {% if line.selling_plan_allocation != nil %}
+            <p>{{ line.selling_plan_allocation.selling_plan.name }}</p>
+          {% endif %}
+
+        </td>
+          <td class="order-list__price-cell">
+            <p class="order-list__item-price">
+              {% if line.final_line_price > 0 %}
+                {{ line.final_line_price | money }}
+                  {% if line.unit_price_measurement %}
+                    <div class="order-list__unit-price">
+                      {{ line.unit_price | money }}/
+                      {%- if line.unit_price_measurement.reference_value != 1 -%}
+                        {{- line.unit_price_measurement.reference_value -}}
+                      {%- endif -%}
+                      {{ line.unit_price_measurement.reference_unit }}
+                    </div>
+                  {% endif %}
+              {% else %}
+                Kostenlos
+              {% endif %}
+            </p>
+          </td>
+      </table>
+    </td>
+  </tr>{% endfor %}
+</table>
+
+<table class="row subtotal-lines">
+  <tr>
+    <td>
+      <table class="row subtotal-table">
+        
+        {% assign discount_value = 0 %}
+        {% for discount_application in discount_applications %}
+          {% if discount_application.target_selection == 'all' %}
+              {% assign discount_value = discount_application.total_allocated_amount %}
+          {% endif %}
+        {% endfor %}
+
+
+  {% for discount_application in discount_applications %}
+    {% if discount_application.target_selection == 'all' %}
+      {% capture discount_title %}
+        {% if discount_application.title %}
+          {{ discount_application.title | upcase }}
+        {% else %}
+          Rabatt
+        {% endif %}
+      {% endcapture %}
+            
+      <tr class="subtotal-line">
+        <td class="subtotal-line__title">
+          <p>
+            {% if titleBold %}
+              <span><strong>Rabatt</strong></span>
+            {% else %}
+              <span>Rabatt</span>
+            {% endif %}
+              <span class="subtotal-line__discount">
+                <span class="subtotal-line__discount-title">{% if discount_title.size > 0 %}({{ discount_title | strip }}){% endif %}</span>
+              </span>
+          </p>
+        </td>
+        <td class="subtotal-line__value">
+          {% if valueBold %}
+            <strong>-{{ discount_application.total_allocated_amount | money }}</strong>
+          {% else %}
+            -{{ discount_application.total_allocated_amount | money }}
+          {% endif %}  
+        </td>
+      </tr>
+
+    {% endif %}
+  {% endfor %}
+
+  {% if delivery_method == 'pick-up' %}
+
+    <tr class="subtotal-line">
+      <td class="subtotal-line__title">
+        <p>
+          {% if titleBold %}
+            <span><strong>Abholungen</strong></span>
+          {% else %}
+            <span>Abholungen</span>
+          {% endif %}
+        </p>
+      </td>
+      <td class="subtotal-line__value">
+        {% if valueBold %}
+          <strong>{{ shipping_price | money }}</strong>
+        {% else %}
+          {{ shipping_price | money }}
+        {% endif %}  
+      </td>
+    </tr>
+
+  {% else %}
+
+    <tr class="subtotal-line">
+      <td class="subtotal-line__title">
+        <p>
+          {% if titleBold %}
+            <span><strong>Versand</strong></span>
+          {% else %}
+            <span>Versand</span>
+          {% endif %}
+            <span class="subtotal-line__discount">
+              <span class="subtotal-line__discount-title">{% if shipping_method.title.size > 0 %}({{ shipping_method.title }}){% endif %}</span>
+            </span>
+        </p>
+      </td>
+      <td class="subtotal-line__value">
+        {% if valueBold %}
+          <strong>{{ shipping_price | money }}</strong>
+        {% else %}
+          {{ shipping_price | money }}
+        {% endif %}  
+      </td>
+    </tr>
+
+  {% endif %}
+
+</table>
+      <table class="row subtotal-table">
+        
+        <tr class="subtotal-line">
+          <td class="subtotal-line__title">
+            <p>
+              {% if titleBold %}
+                <span><strong>Trinkgeld</strong></span>
+              {% else %}
+                <span>Trinkgeld</span>
+              {% endif %}
+            </p>
+          </td>
+          <td class="subtotal-line__value">
+            {% if valueBold %}
+              {% if gateway == 'Barzahlung' %}
+                <strong>{{ total_price | minus: subtotal_price | minus: shipping_price | money }}</strong> 
+              {% else %}
+                <strong>{{ 0 | money_with_currency }}</strong>
+              {% endif %}
+            {% else %}
+              {% if gateway == 'Barzahlung' %}
+                {{ total_price | minus: subtotal_price | minus: shipping_price | money }}
+              {% else %}
+                {{ 0 | money_with_currency }}
+              {% endif %}
+            {% endif %}  
+          </td>
+        </tr>
+      </table>
+      <table class="row subtotal-table subtotal-table--total">
+        
+<tr class="subtotal-line">
+  <td class="subtotal-line__title">
+    <p>
+      {% if titleBold %}
+        <span><strong>Gesamt</strong></span>
+      {% else %}
+        <span>Gesamt</span>
+      {% endif %}
+    </p>
+  </td>
+  <td class="subtotal-line__value">
+    {% if valueBold %}
+        <strong>{{ total_price | money_with_currency }}</strong>
+    {% else %}
+        {{ total_price | money_with_currency }}
+    {% endif %}  
+  </td>
+</tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+            </td>
+          </tr>
+        </table>
+      </center>
+    </td>
+  </tr>
+</table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
