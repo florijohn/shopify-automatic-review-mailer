@@ -1,0 +1,1 @@
+# shopify-automatic-review-mailer
