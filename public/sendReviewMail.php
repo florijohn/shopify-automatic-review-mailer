@@ -19,7 +19,6 @@ require_once '../assets/functions.php';
     SELECT fullName AS kunde, COUNT(mail) AS Anzahl, mail AS EMail FROM customers GROUP BY mail HAVING (COUNT(mail) > 1);
 */
 
-$emails = [];
 
 // create DB Connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -34,16 +33,15 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
   // output data of each row
   while($row = $result->fetch_assoc()) {
-    $emails = $row["EMail"];
-    echo "fullname: " . $row["kunde"]. " Bestellungen: " . $row["Anzahl"]. " EMail: " . $row["EMail"] . "<br>";
+    $emails[] = $row["EMail"];
   }
-  echo $emails;
 } else {
   echo "0 results";
 }
 
 for($i = 0; $i < count($emails); $i++) {
-  sendMail($emails[$i], "test");
+  sendEmail($emails[$i]);
 }
+
 $conn->close();
 ?>
