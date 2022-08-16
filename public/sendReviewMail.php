@@ -20,6 +20,9 @@ require_once '../assets/functions.php';
 
 
     TODO Datum Anfragen und Mail nur schicken wenn letzte Mail 30 Tage her ist und Bedingung erfüllt ist
+
+    Bedingung: isHappy = 0
+    lastSent: 30 Tage her
 */
 
 
