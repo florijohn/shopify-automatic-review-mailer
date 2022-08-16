@@ -5,3 +5,6 @@ Selfmade shopify automatic review mailer for shopify to increase 4 and 5 star Go
 
 (Shopify App incoming)
 
+## Thanks for help!
+
+- [@andyld97](https://github.com/andyld97)
