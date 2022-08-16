@@ -17,6 +17,9 @@ require_once '../assets/functions.php';
     Alle Mails bei denen die Bestellungen 2 sind
 
     SELECT fullName AS kunde, COUNT(mail) AS Anzahl, mail AS EMail FROM customers GROUP BY mail HAVING (COUNT(mail) > 1);
+
+
+    TODO Datum Anfragen und Mail nur schicken wenn letzte Mail 30 Tage her ist und Bedingung erfüllt ist
 */
 
 

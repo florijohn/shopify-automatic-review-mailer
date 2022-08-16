@@ -104,7 +104,7 @@
         $mail->addAddress($recipient, "Deine Meinung zählt!");     // Add a recipient");
         
         $mail->Subject = "Deine Meinung zählt!";
-        $mail->Body = '<!DOCTYPE html>
+        $msg = '<!DOCTYPE html>
         <html lang="de">
           <head>
             <title>Al´s Pizza - Deine Meinung zählt!</title>
@@ -585,10 +585,10 @@
                               </td>
                             </tr>
                           </table>
-                                <a class="emoji bad" href="https://review.als-pizza.de/happy.php?happy=0&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/frown-solid.png"></a>
-                                <a class="emoji bad" href="https://review.als-pizza.de/happy.php?happy=0&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/meh-solid.png"></a>     
-                                <a class="emoji ok" href="https://review.als-pizza.de/happy.php?happy=1&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/grin-solid.png"></a>   
-                                <a class="emoji good" href="https://review.als-pizza.de/happy.php?happy=1&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/grin-stars-solid.png"></a>
+                                <a class="emoji bad" href="https://review.als-pizza.de/ishappy.php?happy=0&email=%email%"><img src="https://review.als-pizza.de/img/frown-solid.png"></a>
+                                <a class="emoji bad" href="https://review.als-pizza.de/ishappy.php?happy=0&email=%email%"><img src="https://review.als-pizza.de/img/meh-solid.png"></a>     
+                                <a class="emoji ok" href="https://review.als-pizza.de/ishappy.php?happy=1&email=%email%"><img src="https://review.als-pizza.de/img/grin-solid.png"></a>   
+                                <a class="emoji good" href="https://review.als-pizza.de/ishappy.php?happy=1&email=%email%"><img src="https://review.als-pizza.de/img/grin-stars-solid.png"></a>
                         </center>
                       </td>
                     </tr>
@@ -618,6 +618,8 @@
             </table>
           </body>
         </html>';
+        $bodymail = str_replace('%email%', $recipient, $msg);
+        $mail->Body = $bodymail;
         $mail->send();
     }
 ?>
