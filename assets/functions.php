@@ -63,10 +63,27 @@
             die();
         }
     }
-    
-    function sendEmail($email) {
+    function updateDB($email) {
         require '../config/config.php';
-        $recipient = $email;
+      $conn = new mysqli($servername, $username, $password, $dbname);
+      $now = date_create()->format('Y-m-d H:i:s');
+      // Check connection
+      if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+      }
+
+      $sql = "UPDATE customers SET lastMailSent = \"$now\" WHERE mail = \"$email\" ";
+
+      if ($conn->query($sql) === TRUE) {
+        echo "New record created successfully";
+      } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+      }
+
+      $conn->close();
+    }
+    function sendEmail($recipient) {
+        require '../config/config.php';
         $mail = new PHPMailer(true);
         //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
@@ -568,10 +585,10 @@
                               </td>
                             </tr>
                           </table>
-                                <a class="emoji bad" href="https://als-pizza.de/pages/feedback"><img src="https://review.als-pizza.de/img/frown-solid.png"></a>
-                                <a class="emoji bad" href="https://als-pizza.de/pages/feedback"><img src="https://review.als-pizza.de/img/meh-solid.png"></a>     
-                                <a class="emoji ok" href="https://g.page/r/CZFdjajpSE2pEAg/review"><img src="https://review.als-pizza.de/img/grin-solid.png"></a>   
-                                <a class="emoji good" href="https://g.page/r/CZFdjajpSE2pEAg/review"><img src="https://review.als-pizza.de/img/grin-stars-solid.png"></a>
+                                <a class="emoji bad" href="https://review.als-pizza.de/happy.php?happy=0&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/frown-solid.png"></a>
+                                <a class="emoji bad" href="https://review.als-pizza.de/happy.php?happy=0&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/meh-solid.png"></a>     
+                                <a class="emoji ok" href="https://review.als-pizza.de/happy.php?happy=1&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/grin-solid.png"></a>   
+                                <a class="emoji good" href="https://review.als-pizza.de/happy.php?happy=1&email=<?php echo $recipient; ?>"><img src="https://review.als-pizza.de/img/grin-stars-solid.png"></a>
                         </center>
                       </td>
                     </tr>

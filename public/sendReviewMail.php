@@ -41,6 +41,7 @@ if ($result->num_rows > 0) {
 
 for($i = 0; $i < count($emails); $i++) {
   sendEmail($emails[$i]);
+  updateDB($emails[$i]);
 }
 
 $conn->close();
