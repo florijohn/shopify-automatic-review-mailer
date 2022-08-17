@@ -1,5 +1,6 @@
 <?php
 require '../config/config.php';
+require_once '../assets/functions.php';
 // get Data with POST method
 $happy = $_GET["happy"];
 $email = $_GET["email"];
@@ -10,8 +11,8 @@ if ($happy == 1) {
 } else {
   $btn = "negativen";
 }
-$telegramMsg = "Der Empfänger " . $email . " hat auf den " . $btn . "gedrückt";
-sendTelegramMessage($email, $telegramMsg);
+$telegramMsg = "Der Empfänger " . $email . " hat auf den " . $btn . " Button gedrückt";
+sendTelegramMessage($telegramMsg);
 
 function updateDBHappy($email, $happy) {
     require '../config/config.php';

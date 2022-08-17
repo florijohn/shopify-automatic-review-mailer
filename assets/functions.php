@@ -5,7 +5,7 @@
 
     require '../vendor/autoload.php';
 
-    function sendTelegramMessage($email, $telegramMsg) {
+    function sendTelegramMessage($telegramMsg) {
         require '../config/config.php';
         $data = [
             'appkey' => $appkey,
@@ -75,7 +75,7 @@
       $sql = "UPDATE customers SET lastMailSent = \"$now\" WHERE mail = \"$email\" ";
 
       if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
+        echo "Datum in DB eingefügt";
       } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
       }
