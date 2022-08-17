@@ -5,11 +5,18 @@ $happy = $_GET["happy"];
 $email = $_GET["email"];
 
 updateDBHappy($email, $happy);
+if ($happy == 1) {
+  $btn = "positiven";
+} else {
+  $btn = "negativen";
+}
+$telegramMsg = "Der Empfänger " . $email . " hat auf den " . $btn . "gedrückt";
+sendTelegramMessage($email, $telegramMsg);
 
 function updateDBHappy($email, $happy) {
     require '../config/config.php';
   $conn = new mysqli($servername, $username, $password, $dbname);
-  $now = date_create()->format('Y-m-d H:i:s');
+  //$now = date_create()->format('Y-m-d H:i:s');
   // Check connection
   if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);

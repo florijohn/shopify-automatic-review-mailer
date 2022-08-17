@@ -5,7 +5,7 @@
 
     require '../vendor/autoload.php';
 
-    function sendTelegramMessage() {
+    function sendTelegramMessage($email, $telegramMsg) {
         require '../config/config.php';
         $data = [
             'appkey' => $appkey,

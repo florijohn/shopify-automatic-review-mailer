@@ -24,8 +24,10 @@ if ($result->num_rows > 0) {
 }
 
 for($i = 0; $i < count($emails); $i++) {
+  $telegramMsg = "An " . $emails[$i] . " wurde eine Email gesendet";
   if($isHappy[$i] == 0 && $lastMailSent[$i] < date("Y-m-d", strtotime("-30 days"))) {
     sendEmail($emails[$i]);
+    sendTelegramMessage($emails[$i], $telegramMsg);
   } else {
     echo "Keine Mail gesendet";
   }
