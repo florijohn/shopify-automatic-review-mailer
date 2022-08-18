@@ -29,9 +29,9 @@ for($i = 0; $i < count($emails); $i++) {
     sendEmail($emails[$i]);
     sendTelegramMessage($telegramMsg);
     updateDB($emails[$i]);
-    echo "Mail gesendet";
+    echo "Mail gesendet an " . $emails[$i] . "<br>";
   } else {
-    echo "Keine Mail gesendet";
+    echo "Keine Mail gesendet für " . $emails[$i] . "<br>";
   }
 }
 
