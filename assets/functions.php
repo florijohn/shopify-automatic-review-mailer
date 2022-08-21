@@ -14,44 +14,42 @@
       ];
       file_get_contents($webhookURL . http_build_query($data) );
     }
+
     function updateDBHappy($email, $happy) {
       require '../config/config.php';
+      $sql = "UPDATE customers SET ishappy = \"$happy\" WHERE mail = \"$email\" ";
       $conn = new mysqli($servername, $username, $password, $dbname);
       // Check connection
       if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
       }
-    
-      $sql = "UPDATE customers SET ishappy = \"$happy\" WHERE mail = \"$email\" ";
-    
       if ($conn->query($sql) === TRUE) {
         echo "New record created successfully";
       } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
       }
-    
       $conn->close();
     }
     
     function getURLParameter () {
-        $street = $_GET['street'];
-        $zip = $_GET['zip'];
-        $city = $_GET['city'];
-        $email = $_GET['email'];
-        $addressData = array($street, $zip, $city, $email);
+      $street = $_GET['street'];
+      $zip = $_GET['zip'];
+      $city = $_GET['city'];
+      $email = $_GET['email'];
+      $addressData = array($street, $zip, $city, $email);
 
-        return $addressData;
+      return $addressData;
     }
+
     function updateDB($email) {
       require '../config/config.php';
+      $sql = "UPDATE customers SET lastMailSent = \"$now\" WHERE mail = \"$email\" ";
       $conn = new mysqli($servername, $username, $password, $dbname);
       $now = date_create()->format('Y-m-d H:i:s');
       // Check connection
       if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
       }
-
-      $sql = "UPDATE customers SET lastMailSent = \"$now\" WHERE mail = \"$email\" ";
 
       if ($conn->query($sql) === TRUE) {
         echo "Datum in DB eingefügt";
@@ -61,26 +59,25 @@
 
       $conn->close();
     }
+
     function sendEmail($recipient) {
       require '../config/config.php';
       $mail = new PHPMailer(true);
-      //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-      $mail->isSMTP();                                            //Send using SMTP
-      $mail->Host       = $mailHost;                     //Set the SMTP server to send through
-      $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-      $mail->Username   = $senderMail;                     //SMTP username
-      $mail->Password   = $senderMailpw;                               //SMTP password
-      $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+      //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+      $mail->isSMTP();                                        
+      $mail->Host       = $mailHost;         
+      $mail->SMTPAuth   = true;        
+      $mail->Username   = $senderMail;    
+      $mail->Password   = $senderMailpw;               
+      $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;  
       $mail->Port       = 25;
-      $mail->SMTPAutoTLS = false;  
-      $mail->SMTPSecure = false;   
+      $mail->SMTPAutoTLS = false;
+      $mail->SMTPSecure = false;
       $mail->isHTML(true);
       $mail->CharSet   = 'UTF-8';
 
       $mail->setFrom($senderMail, "Als Pizza und Pasta");
-
-      // custom options
-      $mail->addAddress($recipient, "Deine Meinung zählt!");     // Add a recipient");
+      $mail->addAddress($recipient, "Deine Meinung zählt!");
       
       $mail->Subject = "Deine Meinung zählt!";
       $msg = '<!DOCTYPE html>
